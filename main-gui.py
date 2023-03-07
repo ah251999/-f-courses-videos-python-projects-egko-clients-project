@@ -67,17 +67,17 @@ def add_recof_takenpro():
 
     proname_lab = tk.Label(new_takenpro_win, text='Product:', font=16, justify='right')
     proname_lab.grid(column=0, row=1,pady=5)
-    proname_ent = tk.Entry(new_takenpro_win,font=15)
+    proname_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
     proname_ent.grid(column=1, row=1,pady=5)
 
     quantity_lab = tk.Label(new_takenpro_win, text='Quantity:', font=16)
     quantity_lab.grid(column=0, row=2,pady=5)
-    quantity_ent = tk.Entry(new_takenpro_win,font=15)
+    quantity_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
     quantity_ent.grid(column=1, row=2,pady=5)
 
     sum_lab = tk.Label(new_takenpro_win, text='Value:', font=16)
     sum_lab.grid(column=0, row=3,pady=5)
-    sum_ent = tk.Entry(new_takenpro_win,font=15)
+    sum_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
     sum_ent.grid(column=1, row=3,pady=5)
 
     radi = tk.IntVar(new_takenpro_win)
@@ -115,12 +115,12 @@ def add_new_client():
 
     name_lab = tk.Label(new_client_win, text='Name:', font=16)
     name_lab.grid(column=0, row=1, padx=5, pady=5)
-    name_ent = tk.Entry(new_client_win)
+    name_ent = tk.Entry(new_client_win,justify='right')
     name_ent.grid(column=1, row=1, padx=5, pady=5)
 
     money_lab = tk.Label(new_client_win, text='Money:', font=16)
     money_lab.grid(column=0, row=2, padx=5, pady=5)
-    money_ent = tk.Entry(new_client_win)
+    money_ent = tk.Entry(new_client_win,justify='right')
     money_ent.grid(column=1, row=2, padx=5, pady=5)
 
     reg_record_but = tk.Button(new_client_win, text='Register', command=add_record, width=7)
@@ -168,6 +168,8 @@ def clients_list():
     inserting_clients_data()
 
     myt.place(x=5, y=5, height=570, width=550)
+    
+    add_new_product_but.config(text='Resgister sold product')
 
 
 def records_list():
@@ -251,7 +253,7 @@ def success_msg():
 
 # sqlite3 activator
 if platform.system() == 'Windows':
-    conn = sqlite3.connect("F:/courses-videos/python_Projects/clients_proj/clients-database.db")
+    conn = sqlite3.connect("F:/courses-videos/python-projects/egko-clients-project/clients-database.db")
 else:
     conn = sqlite3.connect("/home/ahmed/PycharmProjects/egko-clients-project/clients-database.db")
 
@@ -267,8 +269,6 @@ root.geometry('1100x580')
 
 myt = ttk.Treeview(root)
 
-clients_list()
-
 clients_but = tk.Button(root, text='Clients list', command=clients_list,font=25,width=20,height=7)
 clients_but.place(x=905, y=70)
 
@@ -283,5 +283,7 @@ add_new_client_but.place(x=750, y=400)
 
 remove_record_but = tk.Button(root, text='Remove registered record', command=delete_from_recof_tknpro, fg='red')
 remove_record_but.place(x=750, y=550)
+
+clients_list()
 
 root.mainloop()
