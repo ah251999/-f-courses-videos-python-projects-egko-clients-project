@@ -10,6 +10,22 @@ import datetime as dt
 # from bidi.algorithm import get_display
 # from awesometkinter.bidirender import add_bidi_support
 
+def change_delay_to_paid():
+    selected_row_from_tree = myt.item(myt.focus(), 'values')
+    
+    if selected_row_from_tree[-1] == "0":
+        
+        change_dely_cash(selected_row_from_tree[0])
+        
+        change_client_credit(1,selected_row_from_tree[1],selected_row_from_tree[5])
+        
+        conn.commit()
+        
+        inserting_records_data()
+        
+    else:
+        messagebox.showinfo(message="Error")
+
 
 def delete_from_recof_tknpro():
     selected_row_from_tree = myt.item(myt.focus(), 'values')
@@ -134,14 +150,17 @@ def add_new_client():
 
 def change_client_credit(add_remove, client_name, credit_change):
     
+    #بيزود القيمة المدخلة على حساب العميل
     if add_remove == 0:
         
         c.execute('SELECT credit FROM clients WHERE name = ?', (client_name,))
         current_credit = c.fetchone()
 
         new_credit = current_credit[0] + int(credit_change)
+        
         c.execute('UPDATE clients SET credit = ? WHERE name = ?', (new_credit, client_name,))
 
+    #بيطرح القيمة المدخلة من حساب العميل
     elif add_remove == 1:
         
         c.execute('SELECT credit FROM clients WHERE name = ?', (client_name,))
@@ -169,7 +188,7 @@ def clients_list():
 
     myt.place(x=5, y=5, height=570, width=550)
     
-    add_new_product_but.config(text='Resgister sold product')
+    add_new_product_but.config(text='Resgister sold product',command=add_recof_takenpro)
 
 
 def records_list():
@@ -196,7 +215,7 @@ def records_list():
 
     myt.place(x=5, y=5, height=570, width=695)
 
-    add_new_product_but.config(text='test')
+    add_new_product_but.config(text='دفع أجل',command=change_delay_to_paid)
 
 
 # check if the selected record has been bought in cash or delay
@@ -204,6 +223,11 @@ def delay_cash(record_id):
     c.execute('SELECT dely_cash FROM recof_tknpro WHERE rowid = ?', (record_id,))
     return c.fetchone()[0]
 
+
+#تغيير الصف(السجل) من اجل الى مدفوع
+#عن طريق تغيير قيمة اخر عمود من 0 الى 1
+def change_dely_cash(record_id):
+    c.execute('UPDATE recof_tknpro SET dely_cash = ? WHERE rowid = ?', (1,record_id,))
 
 def inserting_records_data():
     for item in myt.get_children():
