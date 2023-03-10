@@ -10,6 +10,62 @@ import datetime as dt
 # from bidi.algorithm import get_display
 # from awesometkinter.bidirender import add_bidi_support
 
+def arng_by_newest_date():
+    selected_row_from_tree = myt.item(myt.focus(), 'values')
+
+    myt['columns'] = ('id', 'client', 'product', 'price', 'quantity', 'pricesum', 'tkn_time')
+    myt.column('#0', width=0, stretch=False)
+    myt.column('id', width=35, anchor='center')
+    myt.column('client', width=120, anchor='center')
+    myt.column('product', width=230, anchor='center')
+    myt.column('price', width=60, anchor='center')
+    myt.column('quantity', width=60, anchor='center')
+    myt.column('pricesum', width=70, anchor='center')
+    myt.column('tkn_time', width=220, anchor='center')
+
+    myt.heading('#0', text='')
+    myt.heading('id', text='ID', anchor='center')
+    myt.heading('client', text='Client', anchor='center')
+    myt.heading('product', text='Product', anchor='center')
+    myt.heading('price', text='PPU', anchor='center')
+    myt.heading('quantity', text='Qnt', anchor='center')
+    myt.heading('pricesum', text='Sum', anchor='center')
+    myt.heading('tkn_time', text='Time', anchor='center')
+
+    for item in myt.get_children():
+        myt.delete(item)
+
+    c.execute('select rowid,* from recof_tknpro where client = ? order by rowid desc',(selected_row_from_tree[1],))
+
+    for rec_num, rec_rows in enumerate(c.fetchall()):
+        rec_mylist = list(rec_rows)
+        rec_mylist[-3] = "{:,}".format(rec_mylist[-3])
+
+        # ca2c2c:red----Blue----ffffff:grey
+        myt.tag_configure('delay_strip1', foreground='#ca2c2c', background='white')
+        myt.tag_configure('delay_strip2', foreground='#ca2c2c', background='#d9d9d9')
+        myt.tag_configure('cash_strip1', foreground='blue', background='white')
+        myt.tag_configure('cash_strip2', foreground='blue', background='#d9d9d9')
+
+        if delay_cash(rec_mylist[0]) == 0:
+            if rec_num % 2 == 0:
+                myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='delay_strip1')
+            else:
+                myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='delay_strip2')
+        if delay_cash(rec_mylist[0]) == 1:
+            if rec_num % 2 == 0:
+                myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='cash_strip1')
+            else:
+                myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='cash_strip2')
+
+    myt.place(x=5, y=5, height=570, width=695)
+
+    add_new_product_but.config(text='دفع أجل', command=change_delay_to_paid)
+    clients_and_rec_but.config(text='جدول العملاء', command=clients_list)
+
+
+
+
 def change_delay_to_paid():
     selected_row_from_tree = myt.item(myt.focus(), 'values')
     
@@ -188,8 +244,12 @@ def clients_list():
 
     myt.place(x=5, y=5, height=570, width=550)
     
-    add_new_product_but.config(text='Resgister sold product',command=add_recof_takenpro)
+    add_new_product_but.config(text='تسجيل بيع بند',command=add_recof_takenpro)
     clients_and_rec_but.config(text='جدول المنتجات', command=records_list)
+    clients_record_but.config(state='normal')
+    add_new_client_but.config(state='normal')
+    remove_record_but.config(state='disabled')
+
 
 
 def records_list():
@@ -218,6 +278,9 @@ def records_list():
 
     add_new_product_but.config(text='دفع أجل',command=change_delay_to_paid)
     clients_and_rec_but.config(text='جدول العملاء',command=clients_list)
+    clients_record_but.config(state='disabled')
+    add_new_client_but.config(state='disabled')
+    remove_record_but.config(state='normal')
 
 
 # check if the selected record has been bought in cash or delay
@@ -235,7 +298,7 @@ def inserting_records_data():
     for item in myt.get_children():
         myt.delete(item)
 
-    c.execute('select rowid,* from recof_tknpro order by tkn_time desc')
+    c.execute('select rowid,* from recof_tknpro order by rowid desc')
 
     for rec_num, rec_rows in enumerate(c.fetchall()):
         rec_mylist = list(rec_rows)
@@ -301,11 +364,14 @@ clients_and_rec_but.place(x=755, y=70)
 #records_but = tk.Button(root, text='Products list', command=records_list,font=25,width=20,height=7)
 #records_but.place(x=710, y=70)
 
-add_new_product_but = tk.Button(root, text='Register sold product', command=add_recof_takenpro)
+add_new_product_but = tk.Button(root, text='تسجيل بيع بند', command=add_recof_takenpro)
 add_new_product_but.place(x=750, y=350)
 
-add_new_client_but = tk.Button(root, text='Add new client', command=add_new_client)
-add_new_client_but.place(x=750, y=400)
+clients_record_but = tk.Button(root, text='سجلات العميل', command=arng_by_newest_date)
+clients_record_but.place(x=750, y=400)
+
+add_new_client_but = tk.Button(root, text='إضافة عميل جديد', command=add_new_client)
+add_new_client_but.place(x=750, y=450)
 
 remove_record_but = tk.Button(root, text='Remove registered record', command=delete_from_recof_tknpro, fg='red')
 remove_record_but.place(x=750, y=550)
