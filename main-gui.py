@@ -243,7 +243,8 @@ def clients_list():
     inserting_clients_data()
 
     myt.place(x=5, y=5, height=570, width=550)
-    
+
+    show_current_table_lab.config(text='العملاء')
     add_new_product_but.config(text='تسجيل بيع بند',command=add_recof_takenpro)
     clients_and_rec_but.config(text='جدول المنتجات', command=records_list)
     clients_record_but.config(state='normal')
@@ -276,6 +277,7 @@ def records_list():
 
     myt.place(x=5, y=5, height=570, width=695)
 
+    show_current_table_lab.config(text='المنتجات')
     add_new_product_but.config(text='دفع أجل',command=change_delay_to_paid)
     clients_and_rec_but.config(text='جدول العملاء',command=clients_list)
     clients_record_but.config(state='disabled')
@@ -358,8 +360,11 @@ root.geometry('1100x580')
 
 myt = ttk.Treeview(root)
 
+show_current_table_lab = tk.Label(root, text='العملاء', font=('bold',50),fg='green',bg='black')
+show_current_table_lab.place(x=755,y=25)
+
 clients_and_rec_but = tk.Button(root, text='جدول المنتجات', command=clients_list,font=25,width=20,height=7)
-clients_and_rec_but.place(x=755, y=70)
+clients_and_rec_but.place(x=755, y=130)
 
 #records_but = tk.Button(root, text='Products list', command=records_list,font=25,width=20,height=7)
 #records_but.place(x=710, y=70)
