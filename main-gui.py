@@ -235,7 +235,7 @@ def inserting_records_data():
     for item in myt.get_children():
         myt.delete(item)
 
-    c.execute('select rowid,* from recof_tknpro')
+    c.execute('select rowid,* from recof_tknpro order by tkn_time desc')
 
     for rec_num, rec_rows in enumerate(c.fetchall()):
         rec_mylist = list(rec_rows)
