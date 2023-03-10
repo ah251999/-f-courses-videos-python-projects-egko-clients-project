@@ -189,6 +189,7 @@ def clients_list():
     myt.place(x=5, y=5, height=570, width=550)
     
     add_new_product_but.config(text='Resgister sold product',command=add_recof_takenpro)
+    clients_and_rec_but.config(text='جدول المنتجات', command=records_list)
 
 
 def records_list():
@@ -216,6 +217,7 @@ def records_list():
     myt.place(x=5, y=5, height=570, width=695)
 
     add_new_product_but.config(text='دفع أجل',command=change_delay_to_paid)
+    clients_and_rec_but.config(text='جدول العملاء',command=clients_list)
 
 
 # check if the selected record has been bought in cash or delay
@@ -293,11 +295,11 @@ root.geometry('1100x580')
 
 myt = ttk.Treeview(root)
 
-clients_but = tk.Button(root, text='Clients list', command=clients_list,font=25,width=20,height=7)
-clients_but.place(x=905, y=70)
+clients_and_rec_but = tk.Button(root, text='جدول المنتجات', command=clients_list,font=25,width=20,height=7)
+clients_and_rec_but.place(x=755, y=70)
 
-records_but = tk.Button(root, text='Products list', command=records_list,font=25,width=20,height=7)
-records_but.place(x=710, y=70)
+#records_but = tk.Button(root, text='Products list', command=records_list,font=25,width=20,height=7)
+#records_but.place(x=710, y=70)
 
 add_new_product_but = tk.Button(root, text='Register sold product', command=add_recof_takenpro)
 add_new_product_but.place(x=750, y=350)
