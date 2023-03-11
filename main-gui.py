@@ -9,11 +9,25 @@ import datetime as dt
 # from bidi.algorithm import get_display
 # from awesometkinter.bidirender import add_bidi_support
 
+def clear_search():
+
+    frst_wrd_ent.delete(0,'end')
+
+    sec_wrd_ent.delete(0,'end')
+
+    if cli_n:
+        inserting_records_data(cli_n,None,None)
+    else:
+        inserting_records_data(None,None,None)
+
 def arng_client_by_latest_rowid():
 
     selected_row_from_tree = myt.item(myt.focus(), 'values')
 
-    records_list(selected_row_from_tree[1])
+    global cli_n
+    cli_n = selected_row_from_tree[1]
+
+    records_list(cli_n)
 
 
 def change_delay_to_paid():
@@ -28,7 +42,7 @@ def change_delay_to_paid():
         
         conn.commit()
         
-        inserting_records_data(None)
+        inserting_records_data(None,None,None)
         
     else:
         messagebox.showinfo(message="Error")
@@ -45,7 +59,7 @@ def delete_from_recof_tknpro():
     
     conn.commit()
     
-    inserting_records_data(None)
+    inserting_records_data(None,None,None)
 
 
 def add_recof_takenpro():
@@ -202,6 +216,9 @@ def clients_list():
     clients_record_but.config(state='normal')
     add_new_client_but.config(state='normal')
     remove_record_but.config(state='disabled')
+    search_frame.place_forget()
+    global cli_n
+    cli_n = None
 
 
 
@@ -225,7 +242,7 @@ def records_list(vari_for_insert):
     myt.heading('pricesum', text='Sum', anchor='center')
     myt.heading('tkn_time', text='Time', anchor='center')
 
-    inserting_records_data(vari_for_insert)
+    inserting_records_data(vari_for_insert,None,None)
 
     myt.place(x=5, y=5, height=570, width=695)
 
@@ -235,6 +252,7 @@ def records_list(vari_for_insert):
     clients_record_but.config(state='disabled')
     add_new_client_but.config(state='disabled')
     remove_record_but.config(state='normal')
+    search_frame.place(x=760,y=230)
 
 
 # check if the selected record has been bought in cash or delay
@@ -248,11 +266,20 @@ def delay_cash(record_id):
 def change_dely_cash(record_id):
     c.execute('UPDATE recof_tknpro SET dely_cash = ? WHERE rowid = ?', (1,record_id,))
 
-def inserting_records_data(client_name):
+def inserting_records_data(client_name,frst_wrd,sec_wrd):
     for item in myt.get_children():
         myt.delete(item)
 
-    if client_name:
+
+    if client_name and frst_wrd:
+        print(cli_n)
+        c.execute("select rowid, * from recof_tknpro where client = ?"
+                  " and product like ? and product like ?",(client_name,'%' + frst_wrd + '%','%' + sec_wrd + '%',))
+    elif not client_name and frst_wrd:
+        c.execute("select rowid, * from recof_tknpro where product like ? and product like ?",
+                  ('%' + frst_wrd + '%','%' + sec_wrd + '%',))
+    elif client_name and not frst_wrd:
+        print(cli_n)
         c.execute('select rowid,* from recof_tknpro where client = ? order by rowid desc', (client_name,))
     else:
         c.execute('select rowid,* from recof_tknpro order by rowid desc')
@@ -303,6 +330,8 @@ conn = sqlite3.connect("clients-database.db")
 c = conn.cursor()
 c.execute('select rowid,* from clients')
 
+cli_n = None
+
 root = tk.Tk()
 root.title('Main')
 root.geometry('1100x580')
@@ -315,26 +344,36 @@ myt = ttk.Treeview(root)
 show_current_table_lab = tk.Label(root, text='العملاء', font=('Bold',45),fg='green',justify='right')
 show_current_table_lab.place(x=850, y=135)
 
-clients_and_rec_but = tk.Button(root, text='جدول البنود', command=clients_list,font=25,width=20,height=5)
+clients_and_rec_but = tk.Button(root, text='جدول البنود',font=25,width=20,height=5)
 clients_and_rec_but.place(x=820,y=12)
 
 #records_but = tk.Button(root, text='Products list', command=records_list,font=25,width=20,height=7)
 #records_but.place(x=710, y=70)
 
+#كود الإطار
+#=======================================================================
 search_frame = tk.LabelFrame(root,text='بحث بكلمتين',labelanchor='ne',font=('Bold',15))
-search_frame.place(x=760,y=230)
+
 
 frst_wrd_lab = tk.Label(search_frame,text=':الكلمة الأولى',justify='right',font=('Bold',15))
-frst_wrd_lab.grid(row=0,column=1)
+frst_wrd_lab.grid(row=0,column=2,pady=3)
 
 sec_wrd_lab = tk.Label(search_frame,text=':الكلمة الثانية',justify='right',font=('Bold',15))
-sec_wrd_lab.grid(row=1,column=1)
+sec_wrd_lab.grid(row=1,column=2,pady=3)
 
 frst_wrd_ent = tk.Entry(search_frame,justify='right',font=('Bold',15))
-frst_wrd_ent.grid(row=0,column=0)
+frst_wrd_ent.grid(row=0,column=1,pady=3)
 
 sec_wrd_ent = tk.Entry(search_frame,justify='right',font=('Bold',15))
-sec_wrd_ent.grid(row=1,column=0)
+sec_wrd_ent.grid(row=1,column=1,pady=3)
+
+search_but = tk.Button(search_frame,text='بحث',command=lambda: inserting_records_data(cli_n,frst_wrd_ent.get()
+                                                                                      ,sec_wrd_ent.get()))
+search_but.grid(row=0,column=0,pady=3)
+
+clear_but = tk.Button(search_frame,text='مسح المدخلات',command=clear_search)
+clear_but.grid(row=1,column=0,pady=3)
+#=======================================================================
 
 add_new_product_but = tk.Button(root, text='تسجيل بيع بند', command=add_recof_takenpro)
 add_new_product_but.place(x=750, y=350)
