@@ -312,14 +312,29 @@ root.geometry('1100x580')
 
 myt = ttk.Treeview(root)
 
-show_current_table_lab = tk.Label(root, text='العملاء', font=('bold',50),fg='green')
-show_current_table_lab.place(x=755,y=25)
+show_current_table_lab = tk.Label(root, text='العملاء', font=('Bold',45),fg='green',justify='right')
+show_current_table_lab.place(x=850, y=135)
 
-clients_and_rec_but = tk.Button(root, text='جدول البنود', command=clients_list,font=25,width=20,height=7)
-clients_and_rec_but.place(x=755, y=130)
+clients_and_rec_but = tk.Button(root, text='جدول البنود', command=clients_list,font=25,width=20,height=5)
+clients_and_rec_but.place(x=820,y=12)
 
 #records_but = tk.Button(root, text='Products list', command=records_list,font=25,width=20,height=7)
 #records_but.place(x=710, y=70)
+
+search_frame = tk.LabelFrame(root,text='بحث بكلمتين',labelanchor='ne',font=('Bold',15))
+search_frame.place(x=760,y=230)
+
+frst_wrd_lab = tk.Label(search_frame,text=':الكلمة الأولى',justify='right',font=('Bold',15))
+frst_wrd_lab.grid(row=0,column=1)
+
+sec_wrd_lab = tk.Label(search_frame,text=':الكلمة الثانية',justify='right',font=('Bold',15))
+sec_wrd_lab.grid(row=1,column=1)
+
+frst_wrd_ent = tk.Entry(search_frame,justify='right',font=('Bold',15))
+frst_wrd_ent.grid(row=0,column=0)
+
+sec_wrd_ent = tk.Entry(search_frame,justify='right',font=('Bold',15))
+sec_wrd_ent.grid(row=1,column=0)
 
 add_new_product_but = tk.Button(root, text='تسجيل بيع بند', command=add_recof_takenpro)
 add_new_product_but.place(x=750, y=350)
