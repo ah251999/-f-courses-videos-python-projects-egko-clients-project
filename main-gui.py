@@ -5,68 +5,19 @@ import sqlite3
 import platform
 import datetime as dt
 
-
 # import arabic_reshaper
 # from bidi.algorithm import get_display
 # from awesometkinter.bidirender import add_bidi_support
 
-def arng_by_newest_date():
+def arng_client_by_latest_rowid():
+
     selected_row_from_tree = myt.item(myt.focus(), 'values')
 
-    myt['columns'] = ('id', 'client', 'product', 'price', 'quantity', 'pricesum', 'tkn_time')
-    myt.column('#0', width=0, stretch=False)
-    myt.column('id', width=35, anchor='center')
-    myt.column('client', width=120, anchor='center')
-    myt.column('product', width=230, anchor='center')
-    myt.column('price', width=60, anchor='center')
-    myt.column('quantity', width=60, anchor='center')
-    myt.column('pricesum', width=70, anchor='center')
-    myt.column('tkn_time', width=220, anchor='center')
-
-    myt.heading('#0', text='')
-    myt.heading('id', text='ID', anchor='center')
-    myt.heading('client', text='Client', anchor='center')
-    myt.heading('product', text='Product', anchor='center')
-    myt.heading('price', text='PPU', anchor='center')
-    myt.heading('quantity', text='Qnt', anchor='center')
-    myt.heading('pricesum', text='Sum', anchor='center')
-    myt.heading('tkn_time', text='Time', anchor='center')
-
-    for item in myt.get_children():
-        myt.delete(item)
-
-    c.execute('select rowid,* from recof_tknpro where client = ? order by rowid desc',(selected_row_from_tree[1],))
-
-    for rec_num, rec_rows in enumerate(c.fetchall()):
-        rec_mylist = list(rec_rows)
-        rec_mylist[-3] = "{:,}".format(rec_mylist[-3])
-
-        # ca2c2c:red----Blue----ffffff:grey
-        myt.tag_configure('delay_strip1', foreground='#ca2c2c', background='white')
-        myt.tag_configure('delay_strip2', foreground='#ca2c2c', background='#d9d9d9')
-        myt.tag_configure('cash_strip1', foreground='blue', background='white')
-        myt.tag_configure('cash_strip2', foreground='blue', background='#d9d9d9')
-
-        if delay_cash(rec_mylist[0]) == 0:
-            if rec_num % 2 == 0:
-                myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='delay_strip1')
-            else:
-                myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='delay_strip2')
-        if delay_cash(rec_mylist[0]) == 1:
-            if rec_num % 2 == 0:
-                myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='cash_strip1')
-            else:
-                myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='cash_strip2')
-
-    myt.place(x=5, y=5, height=570, width=695)
-
-    add_new_product_but.config(text='دفع أجل', command=change_delay_to_paid)
-    clients_and_rec_but.config(text='جدول العملاء', command=clients_list)
-
-
+    records_list(selected_row_from_tree[1])
 
 
 def change_delay_to_paid():
+
     selected_row_from_tree = myt.item(myt.focus(), 'values')
     
     if selected_row_from_tree[-1] == "0":
@@ -77,13 +28,14 @@ def change_delay_to_paid():
         
         conn.commit()
         
-        inserting_records_data()
+        inserting_records_data(None)
         
     else:
         messagebox.showinfo(message="Error")
 
 
 def delete_from_recof_tknpro():
+
     selected_row_from_tree = myt.item(myt.focus(), 'values')
 
     if selected_row_from_tree[-1] == '0':
@@ -93,7 +45,7 @@ def delete_from_recof_tknpro():
     
     conn.commit()
     
-    inserting_records_data()
+    inserting_records_data(None)
 
 
 def add_recof_takenpro():
@@ -122,7 +74,7 @@ def add_recof_takenpro():
         sum_ent.delete(0, 'end')
         # success_msg()
         
-        records_list()
+        records_list(None)
         
         proname_ent.focus_set()
 
@@ -246,14 +198,14 @@ def clients_list():
 
     show_current_table_lab.config(text='العملاء')
     add_new_product_but.config(text='تسجيل بيع بند',command=add_recof_takenpro)
-    clients_and_rec_but.config(text='جدول المنتجات', command=records_list)
+    clients_and_rec_but.config(text='جدول المنتجات', command=lambda: records_list(None))
     clients_record_but.config(state='normal')
     add_new_client_but.config(state='normal')
     remove_record_but.config(state='disabled')
 
 
 
-def records_list():
+def records_list(vari_for_insert):
     myt['columns'] = ('id', 'client', 'product', 'price', 'quantity', 'pricesum', 'tkn_time')
     myt.column('#0', width=0, stretch=False)
     myt.column('id', width=35, anchor='center')
@@ -273,7 +225,7 @@ def records_list():
     myt.heading('pricesum', text='Sum', anchor='center')
     myt.heading('tkn_time', text='Time', anchor='center')
 
-    inserting_records_data()
+    inserting_records_data(vari_for_insert)
 
     myt.place(x=5, y=5, height=570, width=695)
 
@@ -296,11 +248,14 @@ def delay_cash(record_id):
 def change_dely_cash(record_id):
     c.execute('UPDATE recof_tknpro SET dely_cash = ? WHERE rowid = ?', (1,record_id,))
 
-def inserting_records_data():
+def inserting_records_data(client_name):
     for item in myt.get_children():
         myt.delete(item)
 
-    c.execute('select rowid,* from recof_tknpro order by rowid desc')
+    if client_name:
+        c.execute('select rowid,* from recof_tknpro where client = ? order by rowid desc', (client_name,))
+    else:
+        c.execute('select rowid,* from recof_tknpro order by rowid desc')
 
     for rec_num, rec_rows in enumerate(c.fetchall()):
         rec_mylist = list(rec_rows)
@@ -343,10 +298,7 @@ def success_msg():
 
 
 # sqlite3 activator
-if platform.system() == 'Windows':
-    conn = sqlite3.connect("F:/courses-videos/python-projects/egko-clients-project/clients-database.db")
-else:
-    conn = sqlite3.connect("/home/ahmed/PycharmProjects/egko-clients-project/clients-database.db")
+conn = sqlite3.connect("clients-database.db")
 
 c = conn.cursor()
 c.execute('select rowid,* from clients')
@@ -372,7 +324,7 @@ clients_and_rec_but.place(x=755, y=130)
 add_new_product_but = tk.Button(root, text='تسجيل بيع بند', command=add_recof_takenpro)
 add_new_product_but.place(x=750, y=350)
 
-clients_record_but = tk.Button(root, text='سجلات العميل', command=arng_by_newest_date)
+clients_record_but = tk.Button(root, text='سجلات العميل', command=arng_client_by_latest_rowid)
 clients_record_but.place(x=750, y=400)
 
 add_new_client_but = tk.Button(root, text='إضافة عميل جديد', command=add_new_client)
