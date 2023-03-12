@@ -21,13 +21,17 @@ def clear_search():
         inserting_records_data(None,None,None)
 
 def arng_client_by_latest_rowid():
+    try:
+        selected_row_from_tree = myt.item(myt.focus(), 'values')
 
-    selected_row_from_tree = myt.item(myt.focus(), 'values')
+        global cli_n
+        cli_n = selected_row_from_tree[1]
 
-    global cli_n
-    cli_n = selected_row_from_tree[1]
-
-    records_list(cli_n)
+        records_list(cli_n)
+    except AttributeError:
+        warning_msg()
+    except IndexError:
+        warning_msg()
 
 
 def change_delay_to_paid():
@@ -63,77 +67,82 @@ def delete_from_recof_tknpro():
 
 
 def add_recof_takenpro():
-    # فى صفحة تسجيل بند على العميل المسلسل بتاع البند بيضاف لوحده
-    # واسم العميل بيكون بتاخد من الصفحة الرئيسية
-    # المطلوب هنا ادخال اسم البند وكميته والسعر الاجمالى والبرنامج هيسجل سعر الواحد
+    try:
+        # فى صفحة تسجيل بند على العميل المسلسل بتاع البند بيضاف لوحده
+        # واسم العميل بيكون بتاخد من الصفحة الرئيسية
+        # المطلوب هنا ادخال اسم البند وكميته والسعر الاجمالى والبرنامج هيسجل سعر الواحد
 
-    def add_prorecord():
-    
-        price_per_unit = int(sum_ent.get()) // int(quantity_ent.get())
-        add_record_values = (real_name, proname_ent.get(), price_per_unit,
+        def add_prorecord():
+            price_per_unit = int(sum_ent.get()) // int(quantity_ent.get())
+            add_record_values = (real_name, proname_ent.get(), price_per_unit,
                              quantity_ent.get(),
                              sum_ent.get(), dt.datetime.now().strftime("%d-%m-%Y %H:%M"),radi.get(),)
-        c.execute('INSERT INTO recof_tknpro(client,product,price,quantity,sum,tkn_time,dely_cash) '
+            c.execute('INSERT INTO recof_tknpro(client,product,price,quantity,sum,tkn_time,dely_cash) '
                   'VALUES (?,?,?,?,?,?,?)', add_record_values)
 
-        if radi.get() == 0:
-            change_client_credit(0, real_name, sum_ent.get())
-        else:
-            pass
+            if radi.get() == 0:
+                change_client_credit(0, real_name, sum_ent.get())
+            else:
+                pass
         
-        conn.commit()
+            conn.commit()
         
-        proname_ent.delete(0, 'end')
-        quantity_ent.delete(0, 'end')
-        sum_ent.delete(0, 'end')
-        # success_msg()
+            proname_ent.delete(0, 'end')
+            quantity_ent.delete(0, 'end')
+            sum_ent.delete(0, 'end')
         
-        records_list(None)
+            records_list(None)
         
+            proname_ent.focus_set()
+        
+        real_name = myt.item(myt.focus(), 'values')[1]
+        
+        new_takenpro_win = tk.Tk()
+        new_takenpro_win.title('Register Record')
+        new_takenpro_win.geometry('410x180')
+
+
+        clientname_lab = tk.Label(new_takenpro_win, text='Client:', font=16)
+        clientname_lab.grid(column=0, row=0,pady=5)
+        clientname_real = tk.Label(new_takenpro_win, text=real_name, font=('calibri',16,'bold'), fg='green',justify='right')
+        clientname_real.grid(column=1, row=0,pady=5)
+
+        proname_lab = tk.Label(new_takenpro_win, text='Product:', font=16, justify='right')
+        proname_lab.grid(column=0, row=1,pady=5)
+        proname_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
+        proname_ent.grid(column=1, row=1,pady=5)
+
+        quantity_lab = tk.Label(new_takenpro_win, text='Quantity:', font=16)
+        quantity_lab.grid(column=0, row=2,pady=5)
+        quantity_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
+        quantity_ent.grid(column=1, row=2,pady=5)
+
+        sum_lab = tk.Label(new_takenpro_win, text='Value:', font=16)
+        sum_lab.grid(column=0, row=3,pady=5)
+        sum_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
+        sum_ent.grid(column=1, row=3,pady=5)
+
+        radi = tk.IntVar(new_takenpro_win)
+
+        radio_delay = tk.Radiobutton(new_takenpro_win, text='Delay', variable=radi, value=0,font=18)
+        radio_delay.grid(column=0, row=4,pady=5,padx=20)
+
+        radio_cash = tk.Radiobutton(new_takenpro_win, text='Cash', variable=radi, value=1,font=18)
+        radio_cash.grid(column=1, row=4,pady=5)
+
+        reg_record_but = tk.Button(new_takenpro_win, text='Register', command=add_prorecord, width=9,font=18,height=2)
+        reg_record_but.place(x=310, y=20)
+
+        cancel_but = tk.Button(new_takenpro_win, text='Cancel', command=new_takenpro_win.destroy, width=9,font=18,height=2)
+        cancel_but.place(x=310, y=90)
+
+        # add_bidi_support(proname_ent)
         proname_ent.focus_set()
+    except AttributeError:
+        warning_msg()
+    except IndexError:
+        warning_msg()
 
-    new_takenpro_win = tk.Tk()
-    new_takenpro_win.title('Register Record')
-    new_takenpro_win.geometry('410x180')
-
-    real_name = myt.item(myt.focus(), 'values')[1]
-
-    clientname_lab = tk.Label(new_takenpro_win, text='Client:', font=16)
-    clientname_lab.grid(column=0, row=0,pady=5)
-    clientname_real = tk.Label(new_takenpro_win, text=real_name, font=('calibri',16,'bold'), fg='green')
-    clientname_real.grid(column=1, row=0,pady=5)
-
-    proname_lab = tk.Label(new_takenpro_win, text='Product:', font=16, justify='right')
-    proname_lab.grid(column=0, row=1,pady=5)
-    proname_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
-    proname_ent.grid(column=1, row=1,pady=5)
-
-    quantity_lab = tk.Label(new_takenpro_win, text='Quantity:', font=16)
-    quantity_lab.grid(column=0, row=2,pady=5)
-    quantity_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
-    quantity_ent.grid(column=1, row=2,pady=5)
-
-    sum_lab = tk.Label(new_takenpro_win, text='Value:', font=16)
-    sum_lab.grid(column=0, row=3,pady=5)
-    sum_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
-    sum_ent.grid(column=1, row=3,pady=5)
-
-    radi = tk.IntVar(new_takenpro_win)
-
-    radio_delay = tk.Radiobutton(new_takenpro_win, text='Delay', variable=radi, value=0,font=18)
-    radio_delay.grid(column=0, row=4,pady=5,padx=20)
-
-    radio_cash = tk.Radiobutton(new_takenpro_win, text='Cash', variable=radi, value=1,font=18)
-    radio_cash.grid(column=1, row=4,pady=5)
-
-    reg_record_but = tk.Button(new_takenpro_win, text='Register', command=add_prorecord, width=9,font=18,height=2)
-    reg_record_but.place(x=310, y=20)
-
-    cancel_but = tk.Button(new_takenpro_win, text='Cancel', command=new_takenpro_win.destroy, width=9,font=18,height=2)
-    cancel_but.place(x=310, y=90)
-
-    # add_bidi_support(proname_ent)
-    proname_ent.focus_set()
 
 
 def add_new_client():
@@ -252,7 +261,7 @@ def records_list(vari_for_insert):
     clients_record_but.config(state='disabled')
     add_new_client_but.config(state='disabled')
     remove_record_but.config(state='normal')
-    search_frame.place(x=760,y=230)
+    search_frame.place(x=750,y=400)
 
 
 # check if the selected record has been bought in cash or delay
@@ -318,10 +327,10 @@ def inserting_clients_data():
         myt.insert(parent='', index=cli_num, text='', values=cli_mylist)
 
 
-def success_msg():
+def warning_msg():
     # get_arabic_display = arabic_reshaper.reshape('تمت العملية بنجاح')
     # messagebox.showinfo(title='good', message=get_display(get_arabic_display))
-    messagebox.showinfo(title='good', message='تمت العملية بنجاح')
+    tk.messagebox.showwarning(title='!انتبه', message='.الرجاء اختيار عميل من الجدول')
 
 
 # sqlite3 activator
@@ -341,11 +350,15 @@ root.geometry('1100x580')
 
 myt = ttk.Treeview(root)
 
-show_current_table_lab = tk.Label(root, text='العملاء', font=('Bold',45),fg='green',justify='right')
-show_current_table_lab.place(x=850, y=135)
+clients_and_rec_but = tk.Button(root, text='جدول البنود',font=('Bold',25))
+clients_and_rec_but.place(x=890,y=12)
 
-clients_and_rec_but = tk.Button(root, text='جدول البنود',font=25,width=20,height=5)
-clients_and_rec_but.place(x=820,y=12)
+clients_record_but = tk.Button(root, text='سجل العميل', command=arng_client_by_latest_rowid,font=('bold',20))
+clients_record_but.place(x=720,y=23)
+
+show_current_table_lab = tk.Label(root, text='العملاء', font=('Bold',45),fg='green',justify='right')
+show_current_table_lab.place(x=840, y=110)
+
 
 #records_but = tk.Button(root, text='Products list', command=records_list,font=25,width=20,height=7)
 #records_but.place(x=710, y=70)
@@ -354,38 +367,41 @@ clients_and_rec_but.place(x=820,y=12)
 #=======================================================================
 search_frame = tk.LabelFrame(root,text='بحث بكلمتين',labelanchor='ne',font=('Bold',15))
 
-
 frst_wrd_lab = tk.Label(search_frame,text=':الكلمة الأولى',justify='right',font=('Bold',15))
 frst_wrd_lab.grid(row=0,column=2,pady=3)
 
 sec_wrd_lab = tk.Label(search_frame,text=':الكلمة الثانية',justify='right',font=('Bold',15))
 sec_wrd_lab.grid(row=1,column=2,pady=3)
 
-frst_wrd_ent = tk.Entry(search_frame,justify='right',font=('Bold',15))
+frst_wrd_ent = tk.Entry(search_frame,justify='right',font=('Bold',15),width=12)
 frst_wrd_ent.grid(row=0,column=1,pady=3)
 
-sec_wrd_ent = tk.Entry(search_frame,justify='right',font=('Bold',15))
+sec_wrd_ent = tk.Entry(search_frame,justify='right',font=('Bold',15),width=12)
 sec_wrd_ent.grid(row=1,column=1,pady=3)
 
-search_but = tk.Button(search_frame,text='بحث',command=lambda: inserting_records_data(cli_n,frst_wrd_ent.get()
+search_but = tk.Button(search_frame,text='بحث',font='Bold',width=3,command=lambda: inserting_records_data(cli_n,frst_wrd_ent.get()
                                                                                       ,sec_wrd_ent.get()))
-search_but.grid(row=0,column=0,pady=3)
+search_but.grid(row=0,column=0,pady=3,padx=3)
 
-clear_but = tk.Button(search_frame,text='مسح المدخلات',command=clear_search)
-clear_but.grid(row=1,column=0,pady=3)
+clear_but = tk.Button(search_frame,text='مسح المدخلات',font='Bold',command=clear_search)
+clear_but.grid(row=1,column=0,pady=3,padx=3)
 #=======================================================================
 
-add_new_product_but = tk.Button(root, text='تسجيل بيع بند', command=add_recof_takenpro)
-add_new_product_but.place(x=750, y=350)
+#اطار الزراير
+#=======================================================================
+but_frame = tk.Frame(root)
+but_frame.place(x=840,y=200)
 
-clients_record_but = tk.Button(root, text='سجلات العميل', command=arng_client_by_latest_rowid)
-clients_record_but.place(x=750, y=400)
+add_new_product_but = tk.Button(but_frame, text='تسجيل بيع بند', command=add_recof_takenpro,font=('bold',15))
+add_new_product_but.grid(row=1,column=0,pady=6)
 
-add_new_client_but = tk.Button(root, text='إضافة عميل جديد', command=add_new_client)
-add_new_client_but.place(x=750, y=450)
+add_new_client_but = tk.Button(but_frame, text='إضافة عميل جديد', command=add_new_client,font=('bold',15))
+add_new_client_but.grid(row=2,column=0,pady=6)
 
-remove_record_but = tk.Button(root, text='Remove registered record', command=delete_from_recof_tknpro, fg='red')
-remove_record_but.place(x=750, y=550)
+remove_record_but = tk.Button(but_frame, text='إزالة(مرتجع) بند',
+            command=delete_from_recof_tknpro, fg='red',font=('bold',15))
+remove_record_but.grid(row=3,column=0,pady=6)
+#=======================================================================
 
 clients_list()
 
