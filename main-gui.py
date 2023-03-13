@@ -101,10 +101,10 @@ def add_recof_takenpro():
         new_takenpro_win.title('Register Record')
         new_takenpro_win.geometry('410x180')
 
-
+        
         clientname_lab = tk.Label(new_takenpro_win, text='Client:', font=16)
         clientname_lab.grid(column=0, row=0,pady=5)
-        clientname_real = tk.Label(new_takenpro_win, text=real_name, font=('calibri',16,'bold'), fg='green',justify='right')
+        clientname_real = tk.Label(new_takenpro_win, text=real_name, font=('bold',18), fg='green',justify='right')
         clientname_real.grid(column=1, row=0,pady=5)
 
         proname_lab = tk.Label(new_takenpro_win, text='Product:', font=16, justify='right')
