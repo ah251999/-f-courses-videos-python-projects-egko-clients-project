@@ -98,43 +98,41 @@ def add_recof_takenpro():
         real_name = myt.item(myt.focus(), 'values')[1]
         
         new_takenpro_win = tk.Tk()
-        new_takenpro_win.title('Register Record')
-        new_takenpro_win.geometry('410x180')
-
+        new_takenpro_win.title('تسجيل بيع بند')
         
-        clientname_lab = tk.Label(new_takenpro_win, text='Client:', font=16)
-        clientname_lab.grid(column=0, row=0,pady=5)
-        clientname_real = tk.Label(new_takenpro_win, text=real_name, font=('bold',18), fg='green',justify='right')
-        clientname_real.grid(column=1, row=0,pady=5)
+        clientname_lab = tk.Label(new_takenpro_win, text=':العميل', font=16)
+        clientname_lab.grid(row=0,column=2,pady=5)
+        clientname_real = tk.Label(new_takenpro_win, text=real_name, font=('bold',20), fg='green',justify='right')
+        clientname_real.grid(row=0,column=1,pady=5)
 
-        proname_lab = tk.Label(new_takenpro_win, text='Product:', font=16, justify='right')
-        proname_lab.grid(column=0, row=1,pady=5)
-        proname_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
-        proname_ent.grid(column=1, row=1,pady=5)
+        proname_lab = tk.Label(new_takenpro_win, text=':المنتج', font=16, justify='right')
+        proname_lab.grid(row=1,column=2,pady=5)
+        proname_ent = tk.Entry(new_takenpro_win,font=15,width=25,justify='right')
+        proname_ent.grid(row=1,column=1,pady=5)
 
-        quantity_lab = tk.Label(new_takenpro_win, text='Quantity:', font=16)
-        quantity_lab.grid(column=0, row=2,pady=5)
-        quantity_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
-        quantity_ent.grid(column=1, row=2,pady=5)
+        quantity_lab = tk.Label(new_takenpro_win, text=':الكمية', font=16)
+        quantity_lab.grid(row=2,column=2,pady=5)
+        quantity_ent = tk.Entry(new_takenpro_win,font=15,justify='right',width=5)
+        quantity_ent.grid(row=2,column=1,pady=5)
 
-        sum_lab = tk.Label(new_takenpro_win, text='Value:', font=16)
-        sum_lab.grid(column=0, row=3,pady=5)
-        sum_ent = tk.Entry(new_takenpro_win,font=15,justify='right')
-        sum_ent.grid(column=1, row=3,pady=5)
+        sum_lab = tk.Label(new_takenpro_win, text=':الاجمالى', font=16)
+        sum_lab.grid(row=3,column=2,pady=5)
+        sum_ent = tk.Entry(new_takenpro_win,font=15,justify='right',width=5)
+        sum_ent.grid(row=3,column=1,pady=5)
 
         radi = tk.IntVar(new_takenpro_win)
 
-        radio_delay = tk.Radiobutton(new_takenpro_win, text='Delay', variable=radi, value=0,font=18)
-        radio_delay.grid(column=0, row=4,pady=5,padx=20)
+        radio_delay = tk.Radiobutton(new_takenpro_win, text='آجل', variable=radi, value=0,font=18)
+        radio_delay.grid(row=4,column=2,pady=5)
 
-        radio_cash = tk.Radiobutton(new_takenpro_win, text='Cash', variable=radi, value=1,font=18)
-        radio_cash.grid(column=1, row=4,pady=5)
+        radio_cash = tk.Radiobutton(new_takenpro_win, text='نقدا', variable=radi, value=1,font=18)
+        radio_cash.grid(row=4,column=1,pady=5)
+        
+        reg_record_but = tk.Button(new_takenpro_win, text='تسجيل', command=add_prorecord,width=5,font=('Bold',16),height=2)
+        reg_record_but.grid(row=5,column=2,pady=5,padx=12)
 
-        reg_record_but = tk.Button(new_takenpro_win, text='Register', command=add_prorecord, width=9,font=18,height=2)
-        reg_record_but.place(x=310, y=20)
-
-        cancel_but = tk.Button(new_takenpro_win, text='Cancel', command=new_takenpro_win.destroy, width=9,font=18,height=2)
-        cancel_but.place(x=310, y=90)
+        cancel_but = tk.Button(new_takenpro_win, text='إلغاء', command=new_takenpro_win.destroy,width=5,font=('Bold',16),height=2)
+        cancel_but.grid(row=5,column=1,pady=5)
 
         # add_bidi_support(proname_ent)
         proname_ent.focus_set()
@@ -281,14 +279,12 @@ def inserting_records_data(client_name,frst_wrd,sec_wrd):
 
 
     if client_name and frst_wrd:
-        print(cli_n)
         c.execute("select rowid, * from recof_tknpro where client = ?"
                   " and product like ? and product like ?",(client_name,'%' + frst_wrd + '%','%' + sec_wrd + '%',))
     elif not client_name and frst_wrd:
         c.execute("select rowid, * from recof_tknpro where product like ? and product like ?",
                   ('%' + frst_wrd + '%','%' + sec_wrd + '%',))
     elif client_name and not frst_wrd:
-        print(cli_n)
         c.execute('select rowid,* from recof_tknpro where client = ? order by rowid desc', (client_name,))
     else:
         c.execute('select rowid,* from recof_tknpro order by rowid desc')
