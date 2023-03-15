@@ -73,7 +73,7 @@ def add_recof_takenpro():
         # المطلوب هنا ادخال اسم البند وكميته والسعر الاجمالى والبرنامج هيسجل سعر الواحد
 
         def add_prorecord():
-            price_per_unit = int(sum_ent.get()) // int(quantity_ent.get())
+            price_per_unit = float(sum_ent.get()) // float(quantity_ent.get())
             add_record_values = (real_name, proname_ent.get(), price_per_unit,
                              quantity_ent.get(),
                              sum_ent.get(), dt.datetime.now().strftime("%d-%m-%Y %H:%M"),radi.get(),)
@@ -185,7 +185,7 @@ def change_client_credit(add_remove, client_name, credit_change):
         c.execute('SELECT credit FROM clients WHERE name = ?', (client_name,))
         current_credit = c.fetchone()
 
-        new_credit = current_credit[0] + int(credit_change)
+        new_credit = current_credit[0] + float(credit_change)
         
         c.execute('UPDATE clients SET credit = ? WHERE name = ?', (new_credit, client_name,))
 
@@ -195,7 +195,7 @@ def change_client_credit(add_remove, client_name, credit_change):
         c.execute('SELECT credit FROM clients WHERE name = ?', (client_name,))
         current_credit = c.fetchone()
         
-        new_credit = current_credit[0] - int(credit_change.replace(',', ''))
+        new_credit = current_credit[0] - float(credit_change.replace(',', ''))
         
         c.execute('UPDATE clients SET credit = ? WHERE name = ?', (new_credit, client_name,))
 
