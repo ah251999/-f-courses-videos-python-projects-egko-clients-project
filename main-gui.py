@@ -155,24 +155,23 @@ def add_new_client():
         name_ent.focus_set()
 
     new_client_win = tk.Tk()
-    new_client_win.title('New client')
-    new_client_win.geometry('360x90')
+    new_client_win.title('تسجيل عميل جديد')
 
-    name_lab = tk.Label(new_client_win, text='Name:', font=16)
-    name_lab.grid(column=0, row=1, padx=5, pady=5)
-    name_ent = tk.Entry(new_client_win,justify='right')
+    name_lab = tk.Label(new_client_win, text=':الاسم', font=('Bold',16))
+    name_lab.grid(column=2, row=1, padx=5, pady=5)
+    name_ent = tk.Entry(new_client_win,justify='right',font=('Bold',16))
     name_ent.grid(column=1, row=1, padx=5, pady=5)
 
-    money_lab = tk.Label(new_client_win, text='Money:', font=16)
-    money_lab.grid(column=0, row=2, padx=5, pady=5)
-    money_ent = tk.Entry(new_client_win,justify='right')
+    money_lab = tk.Label(new_client_win, text=':الآجل', font=('Bold',16))
+    money_lab.grid(column=2, row=2, padx=5, pady=5)
+    money_ent = tk.Entry(new_client_win,justify='right',font=('Bold',16))
     money_ent.grid(column=1, row=2, padx=5, pady=5)
 
-    reg_record_but = tk.Button(new_client_win, text='Register', command=add_record, width=7)
-    reg_record_but.grid(column=3, row=1, padx=5, pady=5)
+    reg_record_but = tk.Button(new_client_win, text='تسجيل', command=add_record, font=('Bold',16))
+    reg_record_but.grid(column=0, row=1, padx=5, pady=5)
 
-    cancel_but = tk.Button(new_client_win, text='Cancel', command=new_client_win.destroy, width=7)
-    cancel_but.grid(column=3, row=2, padx=5, pady=5)
+    cancel_but = tk.Button(new_client_win, text='إلغاء', command=new_client_win.destroy, font=('Bold',16))
+    cancel_but.grid(column=0, row=2, padx=5, pady=5)
 
     name_ent.focus_set()
 
