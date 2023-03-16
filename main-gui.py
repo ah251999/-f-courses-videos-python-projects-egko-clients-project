@@ -215,7 +215,9 @@ def clients_list():
     inserting_clients_data()
 
     myt.place(x=5, y=5, height=570, width=550)
-
+    
+    myst.configure('Treeview',rowheight=50)
+    
     show_current_table_lab.config(text='العملاء')
     add_new_product_but.config(text='تسجيل بيع بند',command=add_recof_takenpro)
     clients_and_rec_but.config(text='جدول البنود', command=lambda: records_list(None))
@@ -251,7 +253,9 @@ def records_list(vari_for_insert):
     inserting_records_data(vari_for_insert,None,None)
 
     myt.place(x=5, y=5, height=570, width=695)
-
+    
+    myst.configure('Treeview',rowheight=30)
+    
     show_current_table_lab.config(text='البنود')
     add_new_product_but.config(text='دفع أجل',command=change_delay_to_paid)
     clients_and_rec_but.config(text='جدول العملاء',command=clients_list)
@@ -340,8 +344,7 @@ root = tk.Tk()
 root.title('Main')
 root.geometry('1100x580')
 
-# myst = ttk.Style()
-# myst.theme_use('clam')
+myst = ttk.Style()
 
 myt = ttk.Treeview(root)
 
