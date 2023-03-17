@@ -29,41 +29,85 @@ def arng_client_by_latest_rowid():
 
         records_list(cli_n)
     except AttributeError:
-        warning_msg()
+        myt_messsage(0)
     except IndexError:
-        warning_msg()
+        myt_message(0)
 
 
 def change_delay_to_paid():
 
-    selected_row_from_tree = myt.item(myt.focus(), 'values')
-    
-    if selected_row_from_tree[-1] == "0":
+    if myt_message(1) == True:
+
+        if len(myt.selection()) == 1:
+
+            selected_row_from_tree = myt.item(myt.focus(), 'values')
         
-        change_dely_cash(selected_row_from_tree[0])
+            if selected_row_from_tree[-1] == "0":
+            
+                change_dely_cash(selected_row_from_tree[0])
+            
+                change_client_credit(1,selected_row_from_tree[1],selected_row_from_tree[5])
+            
+                conn.commit()
+            
+            else:
+                messagebox.showinfo(message="Error")
+
+        else:
+            for i in myt.selection():
+
+                selected_row_from_tree = myt.item(i, 'values')
+
         
-        change_client_credit(1,selected_row_from_tree[1],selected_row_from_tree[5])
-        
-        conn.commit()
-        
+                if selected_row_from_tree[-1] == "0":
+            
+                    change_dely_cash(selected_row_from_tree[0])
+            
+                    change_client_credit(1,selected_row_from_tree[1],selected_row_from_tree[5])
+            
+                    conn.commit()
+                
+                else:
+                    messagebox.showinfo(message="Error")
+
         inserting_records_data(None,None,None)
-        
+
     else:
-        messagebox.showinfo(message="Error")
+        pass
 
 
 def delete_from_recof_tknpro():
 
-    selected_row_from_tree = myt.item(myt.focus(), 'values')
+    if myt_message(2) == True:
 
-    if selected_row_from_tree[-1] == '0':
-        change_client_credit(1, selected_row_from_tree[1], selected_row_from_tree[-3])
-    
-    c.execute('DELETE FROM recof_tknpro WHERE rowid = ?', (selected_row_from_tree[0],))
-    
-    conn.commit()
-    
-    inserting_records_data(None,None,None)
+        if len(myt.selection()) == 1:
+
+            selected_row_from_tree = myt.item(myt.focus(), 'values')
+
+            if selected_row_from_tree[-1] == '0':
+                change_client_credit(1, selected_row_from_tree[1], selected_row_from_tree[-3])
+            
+            c.execute('DELETE FROM recof_tknpro WHERE rowid = ?', (selected_row_from_tree[0],))
+            
+            conn.commit()
+            
+        else:
+
+            for i in myt.selection():
+
+                selected_row_from_tree = myt.item(i, 'values')
+
+                if selected_row_from_tree[-1] == '0':
+                    change_client_credit(1, selected_row_from_tree[1], selected_row_from_tree[-3])
+                
+                c.execute('DELETE FROM recof_tknpro WHERE rowid = ?', (selected_row_from_tree[0],))
+                
+                conn.commit()
+            
+        inserting_records_data(None,None,None)
+        
+    else:
+        pass
 
 
 def add_recof_takenpro():
@@ -137,9 +181,9 @@ def add_recof_takenpro():
         # add_bidi_support(proname_ent)
         proname_ent.focus_set()
     except AttributeError:
-        warning_msg()
+        myt_message(0)
     except IndexError:
-        warning_msg()
+        myt_message(0)
 
 
 
@@ -326,10 +370,20 @@ def inserting_clients_data():
         myt.insert(parent='', index=cli_num, text='', values=cli_mylist)
 
 
-def warning_msg():
+def myt_message(condi):
     # get_arabic_display = arabic_reshaper.reshape('تمت العملية بنجاح')
     # messagebox.showinfo(title='good', message=get_display(get_arabic_display))
-    tk.messagebox.showwarning(title='!انتبه', message='.الرجاء اختيار عميل من الجدول')
+    if condi == 0:
+        tk.messagebox.showwarning(title='!انتبه', message='.الرجاء اختيار عميل من الجدول')
+    elif condi == 1:
+        s = tk.messagebox.askyesno(title='!انتبه', message='تأكيد على دفع الآجل؟')
+        return s
+    elif condi == 2:
+        s = tk.messagebox.askyesno(title='!انتبه', message='هل انت متأكد من حذف البند؟')
+        return s
+
+
+
 
 
 # sqlite3 activator
@@ -357,7 +411,6 @@ clients_record_but.place(x=720,y=23)
 show_current_table_lab = tk.Label(root, text='العملاء', font=('Bold',45),fg='green',justify='right')
 show_current_table_lab.place(x=840, y=110)
 
-
 #records_but = tk.Button(root, text='Products list', command=records_list,font=25,width=20,height=7)
 #records_but.place(x=710, y=70)
 
@@ -383,6 +436,8 @@ search_but.grid(row=0,column=0,pady=3,padx=3)
 
 clear_but = tk.Button(search_frame,text='مسح المدخلات',font='Bold',command=clear_search)
 clear_but.grid(row=1,column=0,pady=3,padx=3)
+
+
 #=======================================================================
 
 #اطار الزراير
