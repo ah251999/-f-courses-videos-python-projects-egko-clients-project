@@ -36,7 +36,7 @@ def arng_client_by_latest_rowid():
 
 def change_delay_to_paid():
 
-    if myt_message(1) == True:
+    if myt_message(1):
 
         if len(myt.selection()) == 1:
 
@@ -78,7 +78,7 @@ def change_delay_to_paid():
 
 def delete_from_recof_tknpro():
 
-    if myt_message(2) == True:
+    if myt_message(2):
 
         if len(myt.selection()) == 1:
 
@@ -258,8 +258,9 @@ def clients_list():
 
     inserting_clients_data()
 
-    myt.place(x=5, y=5, height=570, width=550)
-    
+    #myt.place(x=5, y=5, height=570, width=550)
+    myt_frame.place(x=5, y=5, height=570, width=550)
+
     myst.configure('Treeview',rowheight=50)
     
     show_current_table_lab.config(text='العملاء')
@@ -296,8 +297,9 @@ def records_list(vari_for_insert):
 
     inserting_records_data(vari_for_insert,None,None)
 
-    myt.place(x=5, y=5, height=570, width=695)
-    
+    #myt.place(x=5, y=5, height=570, width=695)
+    myt_frame.place(x=5, y=5, height=570, width=695)
+
     myst.configure('Treeview',rowheight=30)
     
     show_current_table_lab.config(text='البنود')
@@ -379,7 +381,7 @@ def myt_message(condi):
         s = tk.messagebox.askyesno(title='!انتبه', message='تأكيد على دفع الآجل؟')
         return s
     elif condi == 2:
-        s = tk.messagebox.askyesno(title='!انتبه', message='هل انت متأكد من حذف البند؟')
+        s = tk.messagebox.askyesno(title='!انتبه', message='هل انت متأكد من حذف البند/البنود؟')
         return s
 
 
@@ -400,7 +402,15 @@ root.geometry('1100x580')
 
 myst = ttk.Style()
 
-myt = ttk.Treeview(root)
+myt_frame = tk.Frame(root)
+
+myt_scrollbar = ttk.Scrollbar(myt_frame,orient=tk.VERTICAL)
+myt_scrollbar.pack(side='right',fill='both')
+
+myt = ttk.Treeview(myt_frame,yscrollcommand=myt_scrollbar.set)
+myt.pack(side='left',fill='both',expand=1)
+
+myt_scrollbar.configure(command=myt.yview)
 
 clients_and_rec_but = tk.Button(root, text='جدول البنود',font=('Bold',25))
 clients_and_rec_but.place(x=890,y=12)
