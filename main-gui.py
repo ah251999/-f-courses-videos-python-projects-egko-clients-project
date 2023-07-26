@@ -2,12 +2,14 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 import sqlite3
-import platform
 import datetime as dt
 
 # import arabic_reshaper
 # from bidi.algorithm import get_display
 # from awesometkinter.bidirender import add_bidi_support
+
+
+
 
 def clear_search():
 
@@ -378,12 +380,11 @@ def myt_message(condi):
     if condi == 0:
         tk.messagebox.showwarning(title='!انتبه', message='.الرجاء اختيار عميل من الجدول')
     elif condi == 1:
-        s = tk.messagebox.askyesno(title='!انتبه', message='تأكيد على دفع الآجل؟')
-        return s
+        tk.messagebox.askyesno(title='!انتبه', message='تأكيد على دفع الآجل؟')
+        return True
     elif condi == 2:
-        s = tk.messagebox.askyesno(title='!انتبه', message='هل انت متأكد من حذف البند/البنود؟')
-        return s
-
+        tk.messagebox.askyesno(title='!انتبه', message='هل انت متأكد من حذف البند/البنود؟')
+        return True
 
 
 
@@ -400,6 +401,8 @@ root = tk.Tk()
 root.title('Main')
 root.geometry('1100x580')
 
+#إطار الجدول
+#=======================================================================
 myst = ttk.Style()
 
 myt_frame = tk.Frame(root)
@@ -411,20 +414,24 @@ myt = ttk.Treeview(myt_frame,yscrollcommand=myt_scrollbar.set)
 myt.pack(side='left',fill='both',expand=1)
 
 myt_scrollbar.configure(command=myt.yview)
+#=======================================================================
 
+#إطار الزراير الرئيسية
+#=======================================================================
 clients_and_rec_but = tk.Button(root, text='جدول البنود',font=('Bold',25))
 clients_and_rec_but.place(x=890,y=12)
 
 clients_record_but = tk.Button(root, text='سجل العميل', command=arng_client_by_latest_rowid,font=('bold',20))
 clients_record_but.place(x=720,y=23)
-
+ 
 show_current_table_lab = tk.Label(root, text='العملاء', font=('Bold',45),fg='green',justify='right')
 show_current_table_lab.place(x=840, y=110)
 
 #records_but = tk.Button(root, text='Products list', command=records_list,font=25,width=20,height=7)
 #records_but.place(x=710, y=70)
+#=======================================================================
 
-#كود الإطار
+#إطار البحث
 #=======================================================================
 search_frame = tk.LabelFrame(root,text='بحث بكلمتين',labelanchor='ne',font=('Bold',15))
 
@@ -446,11 +453,10 @@ search_but.grid(row=0,column=0,pady=3,padx=3)
 
 clear_but = tk.Button(search_frame,text='مسح المدخلات',font='Bold',command=clear_search)
 clear_but.grid(row=1,column=0,pady=3,padx=3)
-
-
 #=======================================================================
 
-#اطار الزراير
+#إطار الزراير الاساسية
+#(تحت العنوان)
 #=======================================================================
 but_frame = tk.Frame(root)
 but_frame.place(x=840,y=200)
