@@ -9,6 +9,13 @@ import datetime as dt
 # from awesometkinter.bidirender import add_bidi_support
 
 
+def pay_window():
+    
+    selected_row_from_tree = myt.item(myt.focus(), 'values')
+                
+    change_client_credit(1,selected_row_from_tree[1],)
+            
+    conn.commit()
 
 
 def clear_search():
@@ -36,7 +43,7 @@ def arng_client_by_latest_rowid():
         myt_message(0)
 
 
-def change_delay_to_paid():
+"""def change_delay_to_paid():
 
     if myt_message(1):
 
@@ -75,7 +82,7 @@ def change_delay_to_paid():
         inserting_records_data(None,None,None)
 
     else:
-        pass
+        pass"""
 
 
 def delete_from_recof_tknpro():
@@ -86,8 +93,7 @@ def delete_from_recof_tknpro():
 
             selected_row_from_tree = myt.item(myt.focus(), 'values')
 
-            if selected_row_from_tree[-1] == '0':
-                change_client_credit(1, selected_row_from_tree[1], selected_row_from_tree[-3])
+            change_client_credit(1, selected_row_from_tree[1], selected_row_from_tree[-2])
             
             c.execute('DELETE FROM recof_tknpro WHERE rowid = ?', (selected_row_from_tree[0],))
             
@@ -99,8 +105,7 @@ def delete_from_recof_tknpro():
 
                 selected_row_from_tree = myt.item(i, 'values')
 
-                if selected_row_from_tree[-1] == '0':
-                    change_client_credit(1, selected_row_from_tree[1], selected_row_from_tree[-3])
+                change_client_credit(1, selected_row_from_tree[1], selected_row_from_tree[-2])
                 
                 c.execute('DELETE FROM recof_tknpro WHERE rowid = ?', (selected_row_from_tree[0],))
                 
@@ -120,17 +125,21 @@ def add_recof_takenpro():
 
         def add_prorecord():
             price_per_unit = float(sum_ent.get()) // float(quantity_ent.get())
-            add_record_values = (real_name, proname_ent.get(), price_per_unit,
+            """add_record_values = (real_name, proname_ent.get(), price_per_unit,
                              quantity_ent.get(),
                              sum_ent.get(), dt.datetime.now().strftime("%d-%m-%Y %H:%M"),radi.get(),)
             c.execute('INSERT INTO recof_tknpro(client,product,price,quantity,sum,tkn_time,dely_cash) '
-                  'VALUES (?,?,?,?,?,?,?)', add_record_values)
+                  'VALUES (?,?,?,?,?,?,?)', add_record_values)"""
 
-            if radi.get() == 0:
-                change_client_credit(0, real_name, sum_ent.get())
-            else:
-                pass
-        
+            add_record_values = (real_name, proname_ent.get(), price_per_unit,
+                             quantity_ent.get(),
+                             sum_ent.get(), dt.datetime.now().strftime("%d-%m-%Y %H:%M"),)
+            c.execute('INSERT INTO recof_tknpro(client,product,price,quantity,sum,tkn_time) '
+                  'VALUES (?,?,?,?,?,?)', add_record_values)
+                  
+                  
+            change_client_credit(0, real_name, sum_ent.get())
+            
             conn.commit()
         
             proname_ent.delete(0, 'end')
@@ -166,13 +175,13 @@ def add_recof_takenpro():
         sum_ent = tk.Entry(new_takenpro_win,font=15,justify='right',width=5)
         sum_ent.grid(row=3,column=1,pady=5)
 
-        radi = tk.IntVar(new_takenpro_win)
+        """radi = tk.IntVar(new_takenpro_win)
 
         radio_delay = tk.Radiobutton(new_takenpro_win, text='آجل', variable=radi, value=0,font=18)
         radio_delay.grid(row=4,column=2,pady=5)
 
         radio_cash = tk.Radiobutton(new_takenpro_win, text='نقدا', variable=radi, value=1,font=18)
-        radio_cash.grid(row=4,column=1,pady=5)
+        radio_cash.grid(row=4,column=1,pady=5)"""
         
         reg_record_but = tk.Button(new_takenpro_win, text='تسجيل', command=add_prorecord,width=5,font=('Bold',16),height=2)
         reg_record_but.grid(row=5,column=2,pady=5,padx=12)
@@ -305,7 +314,7 @@ def records_list(vari_for_insert):
     myst.configure('Treeview',rowheight=30)
     
     show_current_table_lab.config(text='البنود')
-    add_new_product_but.config(text='دفع أجل',command=change_delay_to_paid)
+    #add_new_product_but.config(text='دفع أجل',command=change_delay_to_paid)
     clients_and_rec_but.config(text='جدول العملاء',command=clients_list)
     clients_record_but.config(state='disabled')
     add_new_client_but.config(state='disabled')
@@ -314,15 +323,15 @@ def records_list(vari_for_insert):
 
 
 # check if the selected record has been bought in cash or delay
-def delay_cash(record_id):
+"""def delay_cash(record_id):
     c.execute('SELECT dely_cash FROM recof_tknpro WHERE rowid = ?', (record_id,))
-    return c.fetchone()[0]
+    return c.fetchone()[0]"""
 
 
 #تغيير الصف(السجل) من اجل الى مدفوع
 #عن طريق تغيير قيمة اخر عمود من 0 الى 1
-def change_dely_cash(record_id):
-    c.execute('UPDATE recof_tknpro SET dely_cash = ? WHERE rowid = ?', (1,record_id,))
+"""def change_dely_cash(record_id):
+    c.execute('UPDATE recof_tknpro SET dely_cash = ? WHERE rowid = ?', (1,record_id,))"""
 
 def inserting_records_data(client_name,frst_wrd,sec_wrd):
     for item in myt.get_children():
@@ -342,15 +351,15 @@ def inserting_records_data(client_name,frst_wrd,sec_wrd):
 
     for rec_num, rec_rows in enumerate(c.fetchall()):
         rec_mylist = list(rec_rows)
-        rec_mylist[-3] = "{:,}".format(rec_mylist[-3])
+        rec_mylist[-2] = "{:,}".format(rec_mylist[-2])
 
         # ca2c2c:red----Blue----ffffff:grey
-        myt.tag_configure('delay_strip1', foreground='#ca2c2c', background='white')
-        myt.tag_configure('delay_strip2', foreground='#ca2c2c', background='#d9d9d9')
+        """myt.tag_configure('delay_strip1', foreground='#ca2c2c', background='white')
+        myt.tag_configure('delay_strip2', foreground='#ca2c2c', background='#d9d9d9')"""
         myt.tag_configure('cash_strip1', foreground='blue', background='white')
         myt.tag_configure('cash_strip2', foreground='blue', background='#d9d9d9')
 
-        if delay_cash(rec_mylist[0]) == 0:
+        """if delay_cash(rec_mylist[0]) == 0:
             if rec_num % 2 == 0:
                 myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='delay_strip1')
             else:
@@ -359,7 +368,12 @@ def inserting_records_data(client_name,frst_wrd,sec_wrd):
             if rec_num % 2 == 0:
                 myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='cash_strip1')
             else:
-                myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='cash_strip2')
+                myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='cash_strip2')"""
+        
+        if rec_num % 2 == 0:
+            myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='cash_strip1')
+        else:
+            myt.insert(parent='', index=rec_num, text='', values=rec_mylist, tags='cash_strip2')
 
 
 def inserting_clients_data():
