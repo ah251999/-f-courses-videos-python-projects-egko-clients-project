@@ -9,13 +9,34 @@ import datetime as dt
 # from awesometkinter.bidirender import add_bidi_support
 
 
-def pay_window():
-    
-    selected_row_from_tree = myt.item(myt.focus(), 'values')
-                
-    change_client_credit(1,selected_row_from_tree[1],)
-            
-    conn.commit()
+def pay_button_window():
+
+    def pay_function():
+        selected_row_from_tree = myt.item(myt.focus(), 'values')
+        change_client_credit(1,selected_row_from_tree[1],pay_entry.get())
+        conn.commit()
+        inserting_clients_data()
+
+    pay_window = tk.Tk()
+    pay_window.title('تخصيم')
+
+    pay_label = tk.Label(pay_window, text='المبلغ')
+    pay_label.grid(row=0,column=1,padx=5,pady=5)
+
+    pay_entry = tk.Entry(pay_window)
+    pay_entry.grid(row=0,column=0,padx=5,pady=5)
+
+    pay_button= tk.Button(pay_window, text='تخصيم', command=pay_function)
+    pay_button.grid(row=1,column=2,padx=5,pady=5)
+
+    clear_pay_button= tk.Button(pay_window, text='مسح', command=lambda: pay_entry.delete(0,'end'))
+    clear_pay_button.grid(row=1,column=1,padx=5,pady=5)
+
+    cancel_pay_button= tk.Button(pay_window, text='إلغاء', command=pay_window.destroy)
+    cancel_pay_button.grid(row=1,column=0,padx=5,pady=5)
+
+
+
 
 
 def clear_search():
@@ -273,13 +294,13 @@ def clients_list():
     myt_frame.place(x=5, y=5, height=570, width=550)
 
     myst.configure('Treeview',rowheight=50)
-    
+
     show_current_table_lab.config(text='العملاء')
-    add_new_product_but.config(text='تسجيل بيع بند',command=add_recof_takenpro)
+    add_new_product_but.config(text='تسجيل بيع بند',command=add_recof_takenpro,state='normal')
     clients_and_rec_but.config(text='جدول البنود', command=lambda: records_list(None))
     clients_record_but.config(state='normal')
     add_new_client_but.config(state='normal')
-    remove_record_but.config(state='disabled')
+    remove_record_but.config(text='تخصيم', command=pay_button_window, fg='black')
     search_frame.place_forget()
     global cli_n
     cli_n = None
@@ -312,13 +333,14 @@ def records_list(vari_for_insert):
     myt_frame.place(x=5, y=5, height=570, width=695)
 
     myst.configure('Treeview',rowheight=30)
-    
+
     show_current_table_lab.config(text='البنود')
-    #add_new_product_but.config(text='دفع أجل',command=change_delay_to_paid)
+    add_new_product_but.config(state='disabled')
     clients_and_rec_but.config(text='جدول العملاء',command=clients_list)
     clients_record_but.config(state='disabled')
     add_new_client_but.config(state='disabled')
-    remove_record_but.config(state='normal')
+    remove_record_but.config(text='إزالة(مرتجع) بند',
+            command=delete_from_recof_tknpro, fg='red',font=('bold',15))
     search_frame.place(x=750,y=400)
 
 
@@ -481,8 +503,7 @@ add_new_product_but.grid(row=1,column=0,pady=6)
 add_new_client_but = tk.Button(but_frame, text='إضافة عميل جديد', command=add_new_client,font=('bold',15))
 add_new_client_but.grid(row=2,column=0,pady=6)
 
-remove_record_but = tk.Button(but_frame, text='إزالة(مرتجع) بند',
-            command=delete_from_recof_tknpro, fg='red',font=('bold',15))
+remove_record_but = tk.Button(but_frame, text='تخصيم', command=pay_button_window,font=('bold',15))
 remove_record_but.grid(row=3,column=0,pady=6)
 #=======================================================================
 
