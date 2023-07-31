@@ -302,6 +302,7 @@ def clients_list():
     add_new_client_but.config(state='normal')
     remove_record_but.config(text='تخصيم', command=pay_button_window, fg='black')
     search_frame.place_forget()
+    main_notebook.place(x=700,y=200)
     global cli_n
     cli_n = None
 
@@ -342,6 +343,7 @@ def records_list(vari_for_insert):
     remove_record_but.config(text='إزالة(مرتجع) بند',
             command=delete_from_recof_tknpro, fg='red',font=('bold',15))
     search_frame.place(x=750,y=400)
+    main_notebook.place_forget()
 
 
 # check if the selected record has been bought in cash or delay
@@ -441,6 +443,13 @@ root.geometry('1100x580')
 #=======================================================================
 myst = ttk.Style()
 
+# تعديل حجم باب notebook(tabs)
+#=======================================================================
+current = myst.theme_use()
+
+myst.theme_settings(current, {"TNotebook.Tab": {"configure": {"padding": [15, 15]}}})
+#=======================================================================
+
 myt_frame = tk.Frame(root)
 
 myt_scrollbar = ttk.Scrollbar(myt_frame,orient=tk.VERTICAL)
@@ -497,16 +506,34 @@ clear_but.grid(row=1,column=0,pady=3,padx=3)
 but_frame = tk.Frame(root)
 but_frame.place(x=840,y=200)
 
-"""add_new_product_but = tk.Button(but_frame, text='تسجيل بيع بند', command=add_recof_takenpro,font=('bold',15))
-add_new_product_but.grid(row=1,column=0,pady=6)"""
+add_new_product_but = tk.Button(but_frame, text='تسجيل بيع بند', command=add_recof_takenpro,font=('bold',15))
+add_new_product_but.grid(row=1,column=0,pady=6)
 
 #anc_ri_but is shortname for add new client and remove item button
 add_new_client_but = tk.Button(but_frame, text='إضافة عميل جديد', command=add_new_client,font=('bold',15))
 add_new_client_but.grid(row=2,column=0,pady=6)
 
-"""remove_record_but = tk.Button(but_frame, text='تخصيم', command=pay_button_window,font=('bold',15))
-remove_record_but.grid(row=3,column=0,pady=6)"""
+remove_record_but = tk.Button(but_frame, text='تخصيم', command=pay_button_window,font=('bold',15))
+remove_record_but.grid(row=3,column=0,pady=6)
 #=======================================================================
+
+
+# قائمة الابواب
+#=======================================================================
+    
+main_notebook = ttk.Notebook(root)
+
+anp_frame = tk.Frame(main_notebook,height=300,width=380)
+anp_frame.pack(fill='both',expand=True)
+
+pay_dely_frame = tk.Frame(main_notebook,height=300,width=380)
+pay_dely_frame.pack(fill='both',expand=True)
+
+main_notebook.add(anp_frame, text='تسجيل بيع بند')
+main_notebook.add(pay_dely_frame, text='تخصيم')
+
+#=======================================================================
+
 
 clients_list()
 
