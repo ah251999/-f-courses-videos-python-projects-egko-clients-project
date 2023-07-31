@@ -526,11 +526,136 @@ main_notebook = ttk.Notebook(root)
 anp_frame = tk.Frame(main_notebook,height=300,width=380)
 anp_frame.pack(fill='both',expand=True)
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+#try:
+# فى صفحة تسجيل بند على العميل المسلسل بتاع البند بيضاف لوحده
+# واسم العميل بيكون بتاخد من الصفحة الرئيسية
+# المطلوب هنا ادخال اسم البند وكميته والسعر الاجمالى والبرنامج هيسجل سعر الواحد
+
+def add_prorecord():
+    
+    real_name = myt.item(myt.focus(), 'values')[1]
+
+    price_per_unit = float(sum_ent.get()) // float(quantity_ent.get())
+
+    add_record_values = (real_name, proname_ent.get(), price_per_unit,
+                     quantity_ent.get(),
+                     sum_ent.get(), dt.datetime.now().strftime("%d-%m-%Y %H:%M"),)
+    c.execute('INSERT INTO recof_tknpro(client,product,price,quantity,sum,tkn_time) '
+          'VALUES (?,?,?,?,?,?)', add_record_values)
+          
+          
+    change_client_credit(0, real_name, sum_ent.get())
+    
+    conn.commit()
+
+    proname_ent.delete(0, 'end')
+    quantity_ent.delete(0, 'end')
+    sum_ent.delete(0, 'end')
+
+    records_list(None)
+
+    proname_ent.focus_set()
+    
+clientname_lab = tk.Label(anp_frame, text=':العميل', font=16)
+clientname_lab.grid(row=0,column=2,pady=5)
+clientname_real = tk.Label(anp_frame, text='اسم العميل', font=('bold',20), fg='green',justify='right')
+clientname_real.grid(row=0,column=1,pady=5)
+
+def testy(event):
+    clientname_real.config(text=myt.item(myt.focus(), 'values')[1])
+
+def testu(event):
+    clientname_real.config(text='اسم العميل')
+
+myt.bind('<<TreeviewSelect>>', testy)
+#clients_and_rec_but.bind('<Button>', testu)
+
+
+proname_lab = tk.Label(anp_frame, text=':المنتج', font=16, justify='right')
+proname_lab.grid(row=1,column=2,pady=5)
+proname_ent = tk.Entry(anp_frame,font=15,width=25,justify='right')
+proname_ent.grid(row=1,column=1,pady=5)
+
+quantity_lab = tk.Label(anp_frame, text=':الكمية', font=16)
+quantity_lab.grid(row=2,column=2,pady=5)
+quantity_ent = tk.Entry(anp_frame,font=15,justify='right',width=5)
+quantity_ent.grid(row=2,column=1,pady=5)
+
+sum_lab = tk.Label(anp_frame, text=':الاجمالى', font=16)
+sum_lab.grid(row=3,column=2,pady=5)
+sum_ent = tk.Entry(anp_frame,font=15,justify='right',width=5)
+sum_ent.grid(row=3,column=1,pady=5)
+
+reg_record_but = tk.Button(anp_frame, text='تسجيل', command=add_prorecord,width=5,font=('Bold',16),height=2)
+reg_record_but.grid(row=5,column=2,pady=5,padx=12)
+
+# add_bidi_support(proname_ent)
+proname_ent.focus_set()
+"""except AttributeError:
+    myt_message(0)
+except IndexError:
+    myt_message(0)"""
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 pay_dely_frame = tk.Frame(main_notebook,height=300,width=380)
 pay_dely_frame.pack(fill='both',expand=True)
 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+def pay_function():
+    selected_row_from_tree = myt.item(myt.focus(), 'values')
+    change_client_credit(1,selected_row_from_tree[1],pay_entry.get())
+    conn.commit()
+    inserting_clients_data()
+
+pay_label = tk.Label(pay_dely_frame, text=':المبلغ', font=('bold',16))
+pay_label.grid(row=0,column=2,padx=5,pady=5)
+
+pay_entry = tk.Entry(pay_dely_frame,font=('bold',16),width=10)
+pay_entry.grid(row=0,column=1,padx=5,pady=5)
+
+pay_button= tk.Button(pay_dely_frame, text='تخصيم', command=pay_function,font=('bold',16))
+pay_button.grid(row=1,column=1,padx=5,pady=5)
+
+clear_pay_button= tk.Button(pay_dely_frame, text='مسح', command=lambda: pay_entry.delete(0,'end'),font=('bold',16))
+clear_pay_button.grid(row=0,column=0,padx=5,pady=5)
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+add_new_client_frame = tk.Frame(main_notebook,height=100,width=100)
+add_new_client_frame.pack(fill='both',expand=True)
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+def add_record():
+    add_record_values = (name_ent.get(), money_ent.get(),)
+    c.execute('INSERT INTO clients VALUES (?,?)', add_record_values)
+    conn.commit()
+    name_ent.delete(0, 'end')
+    money_ent.delete(0, 'end')
+    # success_msg()
+    clients_list()
+    name_ent.focus_set()
+
+name_lab = tk.Label(add_new_client_frame, text=':الاسم', font=('Bold',16))
+name_lab.grid(column=2, row=1, padx=5, pady=5)
+name_ent = tk.Entry(add_new_client_frame,justify='right',font=('Bold',16))
+name_ent.grid(column=1, row=1, padx=5, pady=5)
+
+money_lab = tk.Label(add_new_client_frame, text=':الآجل', font=('Bold',16))
+money_lab.grid(column=2, row=2, padx=5, pady=5)
+money_ent = tk.Entry(add_new_client_frame,justify='right',font=('Bold',16))
+money_ent.grid(column=1, row=2, padx=5, pady=5)
+
+reg_record_but = tk.Button(add_new_client_frame, text='تسجيل', command=add_record, font=('Bold',16))
+reg_record_but.grid(column=0, row=1, padx=5, pady=5)
+
+name_ent.focus_set()
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
 main_notebook.add(anp_frame, text='تسجيل بيع بند')
 main_notebook.add(pay_dely_frame, text='تخصيم')
+main_notebook.add(add_new_client_frame, text='إضافة عميل جديد')
 
 #=======================================================================
 
