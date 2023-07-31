@@ -497,15 +497,15 @@ clear_but.grid(row=1,column=0,pady=3,padx=3)
 but_frame = tk.Frame(root)
 but_frame.place(x=840,y=200)
 
-"""add_new_product_but = tk.Button(but_frame, text='تسجيل بيع بند', command=add_recof_takenpro,font=('bold',15))
-add_new_product_but.grid(row=1,column=0,pady=6)"""
+add_new_product_but = tk.Button(but_frame, text='تسجيل بيع بند', command=add_recof_takenpro,font=('bold',15))
+add_new_product_but.grid(row=1,column=0,pady=6)
 
 #anc_ri_but is shortname for add new client and remove item button
 add_new_client_but = tk.Button(but_frame, text='إضافة عميل جديد', command=add_new_client,font=('bold',15))
 add_new_client_but.grid(row=2,column=0,pady=6)
 
-"""remove_record_but = tk.Button(but_frame, text='تخصيم', command=pay_button_window,font=('bold',15))
-remove_record_but.grid(row=3,column=0,pady=6)"""
+remove_record_but = tk.Button(but_frame, text='تخصيم', command=pay_button_window,font=('bold',15))
+remove_record_but.grid(row=3,column=0,pady=6)
 #=======================================================================
 
 clients_list()
