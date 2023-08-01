@@ -36,9 +36,6 @@ def pay_button_window():
     cancel_pay_button.grid(row=1,column=0,padx=5,pady=5)
 
 
-
-
-
 def clear_search():
 
     frst_wrd_ent.delete(0,'end')
@@ -307,7 +304,6 @@ def clients_list():
     cli_n = None
 
 
-
 def records_list(vari_for_insert):
     myt['columns'] = ('id', 'client', 'product', 'price', 'quantity', 'pricesum', 'tkn_time')
     myt.column('#0', width=0, stretch=False)
@@ -566,12 +562,16 @@ clientname_real.grid(row=0,column=1,pady=5)
 def testy(event):
     clientname_real.config(text=myt.item(myt.focus(), 'values')[1])
 
-def testu(event):
-    clientname_real.config(text='اسم العميل')
-
 myt.bind('<<TreeviewSelect>>', testy)
-#clients_and_rec_but.bind('<Button>', testu)
 
+
+def lolo(event):
+    clientname_real.config(text='اسم العميل')
+    for i in myt.selection():
+        myt.selection_remove(i)
+        
+clients_and_rec_but.bind('<Button-1>',lolo)
+clients_record_but.bind('<Button-1>',lolo)
 
 proname_lab = tk.Label(anp_frame, text=':المنتج', font=16, justify='right')
 proname_lab.grid(row=1,column=2,pady=5)
