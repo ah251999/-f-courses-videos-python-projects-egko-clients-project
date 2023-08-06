@@ -25,6 +25,7 @@ def clear_search():
 
 def arng_client_by_latest_rowid():
     try:
+        myt.unbind('<<>TreeviewSelect>')
         selected_row_from_tree = myt.item(myt.focus(), 'values')
 
         global cli_n
@@ -95,7 +96,10 @@ def change_client_credit(add_remove, client_name, credit_change):
 
 
 def clients_list():
-
+    
+    # تفعيل تغيير (اسم العميل) بالاسم المحدد من الشجرة
+    myt.bind('<<TreeviewSelect>>', testy)
+    
     myt['columns'] = ('id', 'name', 'money')
     myt.column('#0', width=0, stretch=False)
     myt.column('id', width=35, anchor='center')
@@ -127,6 +131,10 @@ def clients_list():
 
 
 def records_list(vari_for_insert):
+    
+    # تعطيل تغيير (اسم العميل) بالاسم المحدد من الشجرة
+    myt.unbind('<<TreeviewSelect>>')
+    
     myt['columns'] = ('id', 'client', 'product', 'price', 'quantity', 'pricesum', 'tkn_time')
     myt.column('#0', width=0, stretch=False)
     myt.column('id', width=35, anchor='center')
@@ -370,23 +378,12 @@ clientname_real = tk.Label(anp_frame, text='اسم العميل', font=('bold',2
 clientname_real.grid(row=0,column=1,pady=5)
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# تغيير (اسم العميل) بالاسم المحدد من الشجرة
+# دالة تغيير (اسم العميل) بالاسم المحدد من الشجرة
 def testy(event):
-    clientname_real.config(text=myt.item(myt.focus(), 'values')[1])
+    global cli_n
+    cli_n=myt.item(myt.focus(), 'values')[1]
+    clientname_real.config(text=cli_n)
 
-myt.bind('<<TreeviewSelect>>', testy)
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-# عند الضغط على زرار (جدول البنود) او (جدول العميل) بيغير الاسم المحدد
-# الى (اسم العميل) بمعنى اخر بيعكس الدالة اللى قبلها
-def lolo(event):
-    clientname_real.config(text='اسم العميل')
-    for i in myt.selection():
-        myt.selection_remove(i)
-        
-clients_and_rec_but.bind('<Button-1>',lolo)
-clients_record_but.bind('<Button-1>',lolo)
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 proname_lab = tk.Label(anp_frame, text=':المنتج', font=16, justify='right')
@@ -407,7 +404,19 @@ sum_ent.grid(row=3,column=1,pady=5)
 reg_record_but = tk.Button(anp_frame, text='تسجيل', command=add_prorecord,width=5,font=('Bold',16),height=2)
 reg_record_but.grid(row=5,column=2,pady=5,padx=12)
 
-reg_record_but.bind('<Button-1>',lolo)
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# عند الضغط على زرار (جدول البنود) او (جدول العميل) بيغير الاسم المحدد
+# الى (اسم العميل) بمعنى اخر بيعكس الدالة اللى قبلها
+def lolo(event):
+    clientname_real.config(text='اسم العميل')
+    for i in myt.selection():
+        myt.selection_remove(i)
+        
+#clients_and_rec_but.bind('<Button-1>',lolo)
+#clients_record_but.bind('<Button-1>',lolo)
+#reg_record_but.bind('<space>',lolo)
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 # add_bidi_support(proname_ent)
 proname_ent.focus_set()
@@ -430,6 +439,7 @@ def pay_function():
     selected_row_from_tree = myt.item(myt.focus(), 'values')
     change_client_credit(1,selected_row_from_tree[1],pay_entry.get())
     conn.commit()
+    pay_entry.delete(0,'end')
     inserting_clients_data()
 
 pay_label = tk.Label(pay_dely_frame, text=':المبلغ', font=('bold',16))
@@ -483,6 +493,12 @@ name_ent.focus_set()
 main_notebook.add(anp_frame, text='تسجيل بيع بند')
 main_notebook.add(pay_dely_frame, text='تخصيم')
 main_notebook.add(add_new_client_frame, text='إضافة عميل جديد')
+
+
+pay_button.bind('<space>',lolo)
+pay_button.bind('<Button-1>',lolo)
+reg_record_but.bind('<space>',lolo)
+reg_record_but.bind('<Button-1>',lolo)
 
 #=======================================================================
 
